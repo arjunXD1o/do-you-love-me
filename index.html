@@ -1,0 +1,431 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Do you love me?</title>
+  <!-- Google Fonts matching the handwritten title and button typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Poppins:wght@500;600;700&display=swap" rel="stylesheet">
+  
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: linear-gradient(135deg, #ffd1dc 0%, #ffb6c9 50%, #ff9eb7 100%);
+      font-family: 'Poppins', sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      user-select: none;
+      position: relative;
+    }
+
+    /* Main Question Card */
+    .card {
+      background: #fffafa;
+      padding: 42px 50px;
+      border-radius: 22px;
+      box-shadow: 0 14px 40px rgba(180, 60, 90, 0.14);
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-width: 380px;
+      max-width: 95vw;
+      transition: all 0.25s ease;
+      z-index: 10;
+    }
+
+    h1.question-title {
+      font-family: 'Indie Flower', cursive;
+      color: #540b1c;
+      font-size: 46px;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      margin-bottom: 10px;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+
+    /* Character GIF Container */
+    .character-wrapper {
+      width: 145px;
+      height: 145px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+
+    .character-gif {
+      width: 135px;
+      height: 135px;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    /* Buttons Area */
+    .buttons-container {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      flex-wrap: nowrap;
+    }
+
+    button {
+      border: none;
+      outline: none;
+      cursor: pointer;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 600;
+      color: #ffffff;
+      transition: background-color 0.2s ease, transform 0.15s ease, box-shadow 0.2s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    #yes-btn {
+      background-color: #2ecc71;
+      font-size: 19px;
+      padding: 13px 34px;
+      border-radius: 50px;
+      box-shadow: 0 6px 18px rgba(46, 204, 113, 0.38);
+    }
+
+    #yes-btn:hover {
+      background-color: #27ae60;
+    }
+
+    #no-btn {
+      background-color: #d91e49;
+      font-size: 18px;
+      padding: 13px 32px;
+      border-radius: 50px;
+      box-shadow: 0 6px 18px rgba(217, 30, 73, 0.35);
+    }
+
+    #no-btn:hover {
+      background-color: #fd6e8a;
+    }
+
+    /* Fullscreen Yes State (Final Step) */
+    body.fullscreen-yes .card {
+      padding: 0;
+      margin: 0;
+      width: 100vw;
+      height: 100vh;
+      max-width: 100vw;
+      border-radius: 0;
+      background: transparent;
+      box-shadow: none;
+    }
+
+    body.fullscreen-yes .question-title,
+    body.fullscreen-yes .character-wrapper,
+    body.fullscreen-yes #no-btn {
+      display: none !important;
+    }
+
+    body.fullscreen-yes #yes-btn {
+      position: fixed;
+      inset: 0;
+      width: 100vw !important;
+      height: 100vh !important;
+      border-radius: 0 !important;
+      font-size: 92px !important;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 999;
+      margin: 0;
+      box-shadow: none;
+    }
+
+    /* Celebration Screen */
+    #success-screen {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 20;
+      animation: fadeIn 0.4s ease-out forwards;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .success-header {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      margin-bottom: 14px;
+    }
+
+    .success-title {
+      font-family: 'Indie Flower', cursive;
+      font-size: 56px;
+      font-weight: 700;
+      color: #e01949;
+      letter-spacing: 1px;
+    }
+
+    .title-heart-svg {
+      width: 48px;
+      height: 48px;
+      overflow: visible;
+      animation: heartBeatTitle 0.9s infinite alternate ease-in-out;
+    }
+
+    @keyframes heartBeatTitle {
+      0% { transform: scale(0.95) rotate(-3deg); }
+      100% { transform: scale(1.08) rotate(3deg); }
+    }
+
+    .happy-char-wrapper {
+      width: 145px;
+      height: 145px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .success-subtitle {
+      font-family: 'Poppins', sans-serif;
+      font-size: 18px;
+      font-weight: 500;
+      color: #6b2d3e;
+      letter-spacing: 0.2px;
+    }
+
+    /* Floating Background Hearts */
+    #hearts-container {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      overflow: hidden;
+      z-index: 5;
+    }
+
+    .floating-heart {
+      position: absolute;
+      bottom: -50px;
+      opacity: 0;
+      animation: floatUpwards linear forwards;
+    }
+
+    @keyframes floatUpwards {
+      0% {
+        transform: translateY(0) translateX(0) rotate(var(--start-rot)) scale(0.7);
+        opacity: 0;
+      }
+      12% {
+        opacity: var(--max-opacity);
+      }
+      85% {
+        opacity: var(--max-opacity);
+      }
+      100% {
+        transform: translateY(-110vh) translateX(var(--drift-x)) rotate(var(--end-rot)) scale(1.1);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 520px) {
+      .card {
+        min-width: 310px;
+        padding: 32px 24px;
+      }
+      h1.question-title {
+        font-size: 36px;
+      }
+      .buttons-container {
+        gap: 12px;
+      }
+      .success-title {
+        font-size: 44px;
+      }
+      body.fullscreen-yes #yes-btn {
+        font-size: 64px !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Hearts Layer -->
+  <div id="hearts-container"></div>
+
+  <!-- Interactive Question Card -->
+  <div class="card" id="question-card">
+    <h1 class="question-title">Do you love me?</h1>
+
+    <div class="character-wrapper">
+      <!-- Original Animated Character GIF from the video -->
+      <img 
+        class="character-gif" 
+        src="https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExMmo3c3l5ODh3ZGN6NHhhaDE2Mjg1djh2YzF0M2xpMWo1Y3k2Z2IzYiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9cw/cLS1cfxvGOPVpf9g3y/giphy.gif" 
+        alt="Cute character holding a heart"
+      >
+    </div>
+
+    <div class="buttons-container">
+      <button id="yes-btn">Yes</button>
+      <button id="no-btn">No</button>
+    </div>
+  </div>
+
+  <!-- Celebration Screen (Hidden Initially) -->
+  <div id="success-screen">
+    <div class="success-header">
+      <span class="success-title">I knew it!</span>
+      <svg class="title-heart-svg" viewBox="0 0 50 50">
+        <path d="M 25 44 C 25 44, 5 31, 5 17.5 C 5 9.5, 12 4.5, 19 7.5 C 22.5 9, 25 13, 25 13 C 25 13, 27.5 9, 31 7.5 C 38 4.5, 45 9.5, 45 17.5 C 45 31, 25 44, 25 44 Z" 
+              fill="#ff2a4b" stroke="#231215" stroke-width="3.2" stroke-linejoin="round" />
+      </svg>
+    </div>
+
+    <div class="happy-char-wrapper">
+      <!-- Original Happy Dancing Character GIF from the video -->
+      <img 
+        class="character-gif" 
+        src="https://media.giphy.com/media/T86i6yDyOYz7J6dPhf/giphy.gif" 
+        alt="Happy dancing character"
+      >
+    </div>
+
+    <p class="success-subtitle">You made the right choice!</p>
+  </div>
+
+  <script>
+    const yesBtn = document.getElementById('yes-btn');
+    const noBtn = document.getElementById('no-btn');
+    const questionCard = document.getElementById('question-card');
+    const successScreen = document.getElementById('success-screen');
+    const heartsContainer = document.getElementById('hearts-container');
+
+    // Exact progression states from the video
+    const noStates = [
+      {
+        text: "Are you sure?",
+        yesStyle: { fontSize: "24px", padding: "18px 36px", borderRadius: "50px" },
+        noStyle:  { fontSize: "16px", padding: "13px 26px" }
+      },
+      {
+        text: "Really sure?",
+        yesStyle: { fontSize: "34px", padding: "30px 44px", borderRadius: "50px" },
+        noStyle:  { fontSize: "15px", padding: "12px 24px" }
+      },
+      {
+        text: "Think again!",
+        yesStyle: { fontSize: "44px", padding: "44px 58px", borderRadius: "42px" },
+        noStyle:  { fontSize: "14px", padding: "11px 22px" }
+      },
+      {
+        text: "Last chance!",
+        yesStyle: { fontSize: "54px", padding: "62px 78px", borderRadius: "34px" },
+        noStyle:  { fontSize: "13px", padding: "10px 20px" }
+      },
+      {
+        text: "Surely not?",
+        yesStyle: { fontSize: "64px", padding: "84px 105px", borderRadius: "28px" },
+        noStyle:  { fontSize: "12px", padding: "9px 18px" }
+      },
+      {
+        text: "You might regret this!",
+        yesStyle: { fontSize: "72px", padding: "105px 140px", borderRadius: "24px" },
+        noStyle:  { fontSize: "11px", padding: "9px 16px" }
+      },
+      {
+        text: "Give it another thought!",
+        yesStyle: { fontSize: "80px", padding: "125px 180px", borderRadius: "22px" },
+        noStyle:  { fontSize: "11px", padding: "8px 14px" }
+      }
+    ];
+
+    let clickStep = 0;
+
+    noBtn.addEventListener('click', () => {
+      if (clickStep < noStates.length) {
+        const state = noStates[clickStep];
+        noBtn.textContent = state.text;
+
+        yesBtn.style.fontSize = state.yesStyle.fontSize;
+        yesBtn.style.padding = state.yesStyle.padding;
+        yesBtn.style.borderRadius = state.yesStyle.borderRadius;
+
+        noBtn.style.fontSize = state.noStyle.fontSize;
+        noBtn.style.padding = state.noStyle.padding;
+
+        clickStep++;
+      } else {
+        document.body.classList.add('fullscreen-yes');
+      }
+    });
+
+    yesBtn.addEventListener('click', () => {
+      document.body.classList.remove('fullscreen-yes');
+      questionCard.style.display = 'none';
+      successScreen.style.display = 'flex';
+      startHeartCelebration();
+    });
+
+    function createFloatingHeart() {
+      const heart = document.createElement('div');
+      heart.classList.add('floating-heart');
+
+      const size = Math.random() * 14 + 14;
+      const leftPos = Math.random() * 96 + 2;
+      const duration = Math.random() * 2.5 + 3.2;
+      const startRot = (Math.random() * 50 - 25) + 'deg';
+      const endRot = (Math.random() * 90 - 45) + 'deg';
+      const driftX = (Math.random() * 80 - 40) + 'px';
+      const maxOpacity = (Math.random() * 0.45 + 0.4).toFixed(2);
+
+      heart.style.left = `${leftPos}vw`;
+      heart.style.width = `${size}px`;
+      heart.style.height = `${size}px`;
+      heart.style.animationDuration = `${duration}s`;
+      heart.style.setProperty('--start-rot', startRot);
+      heart.style.setProperty('--end-rot', endRot);
+      heart.style.setProperty('--drift-x', driftX);
+      heart.style.setProperty('--max-opacity', maxOpacity);
+
+      heart.innerHTML = `
+        <svg viewBox="0 0 32 32" width="100%" height="100%" style="overflow: visible;">
+          <path d="M 16 28 C 16 28, 3 19.5, 3 11 C 3 6, 7.5 3, 12 5 C 14.2 6, 16 8.5, 16 8.5 C 16 8.5, 17.8 6, 20 5 C 24.5 3, 29 6, 29 11 C 29 19.5, 16 28, 16 28 Z" 
+                fill="#ff5c77" stroke="#5a1827" stroke-width="2" stroke-linejoin="round" />
+        </svg>
+      `;
+
+      heartsContainer.appendChild(heart);
+
+      setTimeout(() => {
+        heart.remove();
+      }, duration * 1000);
+    }
+
+    function startHeartCelebration() {
+      for (let i = 0; i < 10; i++) {
+        setTimeout(createFloatingHeart, i * 120);
+      }
+      setInterval(createFloatingHeart, 220);
+    }
+  </script>
+</body>
+</html>
